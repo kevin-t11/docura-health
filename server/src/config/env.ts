@@ -2,7 +2,8 @@
 export const config = {
   DATABASE_URL: process.env.DATABASE_URL!,
   REDIS_URL: process.env.REDIS_URL!,
-  SESSION_SECRET: process.env.SESSION_SECRET!,
+  // Reuse the existing library and its Pinecone namespace for every visitor.
+  SHARED_WORKSPACE_ID: '9529dccf-90c2-46dc-b297-689005339c83',
   AWS_REGION: process.env.AWS_REGION!,
   S3_BUCKET: process.env.S3_BUCKET!,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,

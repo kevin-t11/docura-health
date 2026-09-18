@@ -66,18 +66,14 @@ export function createChatService(
     return chunks;
   }
 
-  async function list(documentId: string, workspaceId: string): Promise<DocumentChat[]> {
-    await documents.getOwned(documentId, workspaceId);
+  async function list(documentId: string): Promise<DocumentChat[]> {
+    await documents.getDocument(documentId);
     await deps.chats.expire(documentId, new Date(Date.now() - STALE_ANSWER_MS));
     return deps.chats.list(documentId);
   }
 
-  async function answer(
-    documentId: string,
-    workspaceId: string,
-    input: ChatRequest
-  ): Promise<DocumentChat> {
-    const document = await documents.getOwned(documentId, workspaceId);
+  async function answer(documentId: string, input: ChatRequest): Promise<DocumentChat> {
+    const document = await documents.getDocument(documentId);
     if (document.status !== 'stored') {
       throw new AppError('Wait for this document to finish processing.', 409);
     }

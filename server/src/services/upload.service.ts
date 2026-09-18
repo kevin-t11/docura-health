@@ -1,3 +1,4 @@
+import { config } from '@/config/env';
 import type { DocumentDetail, DocumentRecord } from '@/domain/document';
 import type { Dependencies } from '@/domain/ports';
 import type { UploadFile } from '@/schemas/upload.schema';
@@ -10,13 +11,13 @@ type UploadDeps = Pick<Dependencies, 'documents' | 'storage'>;
 /** Store an upload and queue it for processing. */
 export function createUploadService(deps: UploadDeps, jobs: JobService) {
   /** Validate the file, persist it, and enqueue processing. */
-  async function upload(workspaceId: string, file: UploadFile): Promise<DocumentDetail> {
+  async function upload(file: UploadFile): Promise<DocumentDetail> {
     const mimeType = validateDocumentFile(file);
     const id = crypto.randomUUID();
     const at = new Date().toISOString();
     const document: DocumentRecord = {
       id,
-      workspaceId,
+      workspaceId: config.SHARED_WORKSPACE_ID,
       storageKey: id,
       name: sanitizeFileName(file.originalname),
       mimeType,

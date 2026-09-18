@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-export const workspaceIdSchema = z.string().uuid();
-
 export const documentParamsSchema = z.object({ id: z.string().uuid() });
 
 /** A blank name restores the automatic speaker label. */

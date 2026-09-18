@@ -17,4 +17,4 @@ The API runs on port 8000. Files use S3; jobs use Upstash Redis.
 Use the Supabase session-pooler URL (port 5432) for `DATABASE_URL`; the app and migrations share it.
 Append `?sslmode=require&uselibpqcompat=true` for encrypted TLS without certificate verification.
 Set `OPENAI_EMBEDDING_DIMENSIONS` to match your Pinecone index.
-Behind HTTPS, the private reverse proxy must overwrite `X-Forwarded-Proto`; cookies follow the request protocol.
+Every visitor uses the same shared library and document chats. No session cookie or session secret is required.

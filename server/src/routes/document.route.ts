@@ -1,5 +1,4 @@
 import { documentRateLimit } from '@/middleware/rate-limit';
-import { getWorkspaceId } from '@/middleware/workspace';
 import {
   documentParamsSchema,
   downloadQuerySchema,
@@ -20,18 +19,17 @@ documentRouter.patch('/:id/speakers', documentRateLimit, async (req, res) => {
     req.body,
     'Use a speaker name of up to 80 characters.'
   );
-  const document = await documentService.renameSpeaker(id, getWorkspaceId(res), speaker, name);
+  const document = await documentService.renameSpeaker(id, speaker, name);
   res.json(document);
 });
 
 /**
  * GET /api/documents
  *
- * List uploaded documents for this workspace.
+ * List uploaded documents in the shared library.
  */
 documentRouter.get('/', async (_req, res) => {
-  const workspaceId = getWorkspaceId(res);
-  const documents = await documentService.list(workspaceId);
+  const documents = await documentService.list();
 
   res.json(documents);
 });
@@ -48,8 +46,7 @@ documentRouter.get('/:id', async (req, res) => {
     'Document not found.',
     404
   );
-  const workspaceId = getWorkspaceId(res);
-  const document = await documentService.detail(documentId, workspaceId);
+  const document = await documentService.detail(documentId);
 
   res.json(document);
 });
@@ -67,8 +64,7 @@ documentRouter.get('/:id/file', async (req, res) => {
     404
   );
   const query = parseInput(downloadQuerySchema, req.query, 'Invalid download option.');
-  const workspaceId = getWorkspaceId(res);
-  const file = await documentService.file(documentId, workspaceId);
+  const file = await documentService.file(documentId);
   const download = query.download === '1';
   const disposition = contentDisposition(file.name, file.mimeType, download);
 
@@ -104,8 +100,7 @@ documentRouter.post('/:id/retry', documentRateLimit, async (req, res) => {
     'Document not found.',
     404
   );
-  const workspaceId = getWorkspaceId(res);
-  const document = await documentService.retry(documentId, workspaceId);
+  const document = await documentService.retry(documentId);
 
   res.status(202).json(document);
 });

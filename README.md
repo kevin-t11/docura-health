@@ -80,7 +80,7 @@ The server follows **routes → services → adapters**. Routes handle HTTP and 
 
 The [Prisma schema](server/prisma/schema.prisma) has a simple ownership hierarchy: a `Workspace` owns `Document` records; each document has `DocumentChunk`, `ProcessingEvent`, and `DocumentChat` records. Its overview and audio transcript are stored as JSON.
 
-There are currently no user accounts. A signed, HTTP-only browser cookie identifies the workspace. Saved data survives restarts, but clearing or losing that cookie creates a new workspace. Chat and source retrieval are scoped to the selected document and workspace. AI output remains reviewable through citations; it is not independently verified evidence.
+Docura uses one shared library with no login or session cookies. Every visitor can see its documents and saved conversations; new uploads and chat messages are shared too. Existing source locations and vector namespaces are preserved. Other legacy workspaces are not exposed. AI output remains reviewable through citations; it is not independently verified evidence.
 
 ## Code checks
 
