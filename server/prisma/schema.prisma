@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DocumentStatus {
+  queued
+  started
+  extracted
+  parsed
+  chunked
+  embedded
+  stored
+  failed
+}
+
+model Workspace {
+  id        String     @id @db.Uuid
+  createdAt DateTime   @default(now())
+  documents Document[]
+}
+
+model Document {
+  id          String            @id @db.Uuid
+  workspaceId String            @db.Uuid
+  workspace   Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  storageKey  String            @unique
+  name        String
+  mimeType    String
+  size        Int
+  status      DocumentStatus    @default(queued)
+  mode        String
+  extraction  String?
+  pageCount   Int               @default(0)
+  chunkCount  Int               @default(0)
+  error       String?
+  overview    Json?
+  transcript  Json?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  chunks      DocumentChunk[]
+  events      ProcessingEvent[]
+  chatHistory DocumentChat[]
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@index([status, updatedAt])
+}
+
+enum ChatStatus {
+  pending
+  completed
+  failed
+}
+
+model DocumentChat {
+  id         String     @id @db.Uuid
+  documentId String     @db.Uuid
+  document   Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  question   String     @db.Text
+  status     ChatStatus @default(pending)
+  answer     String?    @db.Text
+  citations  Json       @default("[]")
+  error      String?
+  attemptId  String     @db.Uuid
+  model      String?
+  usage      Json?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([documentId, createdAt, id])
+}
+
+model DocumentChunk {
+  id           String   @id
+  documentId   String   @db.Uuid
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  index        Int
+  page         Int
+  location     String
+  text         String   @db.Text
+  startSeconds Float?
+  endSeconds   Float?
+  speaker      String?
+
+  @@unique([documentId, index])
+  @@index([documentId, page])
+}
+
+model ProcessingEvent {
+  id         BigInt         @id @default(autoincrement())
+  documentId String         @db.Uuid
+  document   Document       @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  sequence   Int
+  status     DocumentStatus
+  at         DateTime       @default(now())
+
+  @@unique([documentId, sequence])
+}

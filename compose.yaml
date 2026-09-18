@@ -1,0 +1,37 @@
+name: docura
+x-server: &server
+  build: { context: ., dockerfile: server/Dockerfile }
+  env_file: ./server/.env
+services:
+  migrate:
+    <<: *server
+    command: ['bun', 'run', 'db:migrate']
+  api:
+    <<: *server
+    ports: ['127.0.0.1:8000:8000']
+    restart: unless-stopped
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'bun',
+          '-e',
+          "const r=await fetch('http://localhost:8000/api/health');process.exit(r.ok?0:1)"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  worker:
+    <<: *server
+    command: ['bun', 'run', 'worker']
+    restart: unless-stopped
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+  client:
+    build: { context: ., dockerfile: client/Dockerfile }
+    ports: ['127.0.0.1:3000:3000']
+    restart: unless-stopped
+    depends_on:
+      api: { condition: service_healthy }
