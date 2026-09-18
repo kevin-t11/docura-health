@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@custom-variant dark (&:is(.dark *));
+
+/* Tailwind v4 theme only. Component styling lives in TSX utility classes. */
+:root {
+  --ink: #24382f;
+  --text: #35443c;
+  --muted-copy: #626f67;
+  --green: #32684e;
+  --green-dark: #28543f;
+  --line: #dfe5df;
+  --paper: #f8faf8;
+  --soft: #eff3ee;
+  --font-sans: var(--font-dm-sans), Arial, Helvetica, sans-serif;
+  --background: #f8faf8;
+  --foreground: #24382f;
+  --card: #ffffff;
+  --card-foreground: #24382f;
+  --popover: #ffffff;
+  --popover-foreground: #24382f;
+  --primary: #32684e;
+  --primary-foreground: #ffffff;
+  --secondary: #eff3ee;
+  --secondary-foreground: #28543f;
+  --muted: #eff3ee;
+  --muted-foreground: #626f67;
+  --accent: #e5eee5;
+  --accent-foreground: #28543f;
+  --destructive: #aa372e;
+  --border: #dfe5df;
+  --input: #cdd8cf;
+  --ring: #32684e;
+  --radius: 0.625rem;
+}
+@theme inline {
+  --breakpoint-workspace: 68.8125rem;
+  --color-ink: var(--ink);
+  --color-copy: var(--text);
+  --color-primary-dark: var(--green-dark);
+  --color-paper: var(--paper);
+  --color-soft: var(--soft);
+  --font-sans: var(--font-dm-sans), Arial, Helvetica, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+}
+@layer base {
+  * {
+    @apply border-border motion-reduce:animate-none! motion-reduce:scroll-auto! motion-reduce:transition-none!;
+  }
+  button {
+    @apply cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  button,
+  a {
+    @apply transition-colors duration-150;
+  }
+  svg {
+    @apply shrink-0;
+  }
+  :is(button, a, input, textarea):focus-visible {
+    @apply outline-2 outline-offset-3 outline-primary;
+  }
+}
